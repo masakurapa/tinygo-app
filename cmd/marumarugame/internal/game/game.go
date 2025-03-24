@@ -21,6 +21,7 @@ var (
 )
 
 func New() koebiten.Game {
+	koebiten.SetRotation(koebiten.Rotation270)
 	return &game{}
 }
 
@@ -76,21 +77,21 @@ func (g *game) makeCircleTiny() *circle {
 }
 
 func (g *game) updateMoveCircle() {
-	if koebiten.IsKeyPressed(koebiten.KeyArrowDown) {
+	if koebiten.IsKeyPressed(koebiten.KeyArrowUp) {
 		// ジョイスティックの下を押した場合
 		// 円を右に移動するが、領域外に出そうになったら半径分引いて位置を補正
-		y := g.next.y + 1
-		if y <= (maxHeight - g.next.radius*2) {
-			g.next.y = y
+		x := g.next.x + 1
+		if x <= (maxHeight - g.next.radius*2) {
+			g.next.x = x
 		}
 	}
 
-	if koebiten.IsKeyPressed(koebiten.KeyArrowUp) {
+	if koebiten.IsKeyPressed(koebiten.KeyArrowDown) {
 		// ジョイスティックの上を押した場合
 		// 円を左に移動するが、領域外に出そうになったら半径分引いて位置を補正
-		y := g.next.y - 1
-		if y >= (minHeight + g.next.radius*2) {
-			g.next.y = y
+		x := g.next.x - 1
+		if x >= (minHeight + g.next.radius*2) {
+			g.next.x = x
 		}
 	}
 
@@ -100,13 +101,13 @@ func (g *game) updateMoveCircle() {
 }
 
 func (g *game) updateFallCircle() {
-	x := g.next.x + g.next.fall
-	if x < (maxWidth - g.next.radius*2) {
-		g.next.x = x
+	y := g.next.y + g.next.fall
+	if y < (maxWidth - g.next.radius*2) {
+		g.next.y = y
 		return
 	}
 
-	g.next.x = maxWidth - g.next.radius*2
+	g.next.y = maxWidth - g.next.radius*2
 	g.operation = operationMoveCircle
 	g.falled = append(g.falled, *g.next)
 	g.next = g.makeCircleTiny()
