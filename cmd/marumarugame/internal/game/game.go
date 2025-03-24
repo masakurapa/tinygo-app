@@ -21,6 +21,9 @@ var (
 )
 
 func New() koebiten.Game {
+	// 縦画面プレイ
+	// 90だとジョイスティックが右上になってやりにくい
+	// 270でジョイスティックが左下に配置される
 	koebiten.SetRotation(koebiten.Rotation270)
 	return &game{}
 }
@@ -78,7 +81,7 @@ func (g *game) makeCircleTiny() *circle {
 
 func (g *game) updateMoveCircle() {
 	if koebiten.IsKeyPressed(koebiten.KeyArrowUp) {
-		// ジョイスティックの下を押した場合
+		// ジョイスティックの上を押した場合
 		// 円を右に移動するが、領域外に出そうになったら半径分引いて位置を補正
 		x := g.next.x + 1
 		if x <= (maxHeight - g.next.radius*2) {
@@ -87,7 +90,7 @@ func (g *game) updateMoveCircle() {
 	}
 
 	if koebiten.IsKeyPressed(koebiten.KeyArrowDown) {
-		// ジョイスティックの上を押した場合
+		// ジョイスティックの下を押した場合
 		// 円を左に移動するが、領域外に出そうになったら半径分引いて位置を補正
 		x := g.next.x - 1
 		if x >= (minHeight + g.next.radius*2) {
