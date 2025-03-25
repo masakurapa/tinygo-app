@@ -1,4 +1,4 @@
-package game
+package marumaru
 
 import (
 	"github.com/sago35/koebiten"

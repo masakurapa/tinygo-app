@@ -1,4 +1,4 @@
-package game
+package timer
 
 import (
 	"fmt"

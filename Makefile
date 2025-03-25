@@ -6,7 +6,9 @@ init:
 
 flash_lchika:
 	cd cmd/lchika && tinygo flash --target wioterminal
+
+# games
 flash_marumarugame:
-	cd cmd/marumarugame && tinygo flash --target wioterminal
+	cd cmd/game/marumaru && tinygo flash --target wioterminal
 flash_timergame:
-	cd cmd/timergame && tinygo flash --target wioterminal
+	cd cmd/game/timer && tinygo flash --target wioterminal
