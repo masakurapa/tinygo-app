@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/masakurapa/tinygo-app/internal/device"
 	"github.com/sago35/koebiten"
 	"tinygo.org/x/drivers/pixel"
 )
@@ -24,7 +25,7 @@ type game struct {
 }
 
 func (g *game) Update() error {
-	if koebiten.IsKeyJustPressed(koebiten.Key3) {
+	if koebiten.IsKeyJustPressed(device.StickPush) {
 		if g.result != 0 {
 			g.result = time.Duration(0)
 			return nil
@@ -36,7 +37,7 @@ func (g *game) Update() error {
 		return nil
 	}
 
-	if koebiten.IsKeyJustReleased(koebiten.Key3) {
+	if koebiten.IsKeyJustReleased(device.StickPush) {
 		if !g.isPressed {
 			return nil
 		}

@@ -1,19 +1,10 @@
 package game
 
 import (
+	"github.com/masakurapa/tinygo-app/internal/device"
 	"github.com/sago35/koebiten"
 	"tinygo.org/x/drivers/pixel"
 )
-
-// NOTE: キー操作
-// ジョイスティックの右を押した場合:           koebiten.KeyArrowRight
-// ジョイスティックの左を押した場合:           koebiten.KeyArrowLeft
-// wioterminalの上部の右ボタン押下時:        koebiten.Key0
-// wioterminalの上部の中央ボタンを押したとき: koebiten.Key1
-// wioterminalの上部の左ボタンを押したとき:   koebiten.Key2
-// wioterminalのジョイスティックを押したとき: koebiten.Key3
-// ジョイスティックの上を押した場合:           koebiten.KeyArrowUp
-// ジョイスティックの下を押した場合:           koebiten.KeyArrowDown
 
 var (
 	white = pixel.NewMonochrome(0xFF, 0xFF, 0xFF)
@@ -80,7 +71,7 @@ func (g *game) makeCircleTiny() *circle {
 }
 
 func (g *game) updateMoveCircle() {
-	if koebiten.IsKeyPressed(koebiten.KeyArrowUp) {
+	if koebiten.IsKeyPressed(device.StickUp) {
 		// ジョイスティックの上を押した場合
 		// 円を右に移動するが、領域外に出そうになったら半径分引いて位置を補正
 		x := g.next.x + 1
@@ -89,7 +80,7 @@ func (g *game) updateMoveCircle() {
 		}
 	}
 
-	if koebiten.IsKeyPressed(koebiten.KeyArrowDown) {
+	if koebiten.IsKeyPressed(device.StickDown) {
 		// ジョイスティックの下を押した場合
 		// 円を左に移動するが、領域外に出そうになったら半径分引いて位置を補正
 		x := g.next.x - 1
@@ -98,7 +89,7 @@ func (g *game) updateMoveCircle() {
 		}
 	}
 
-	if koebiten.IsKeyJustPressed(koebiten.Key3) {
+	if koebiten.IsKeyJustPressed(device.StickPush) {
 		g.operation = operationFallCircle
 	}
 }
