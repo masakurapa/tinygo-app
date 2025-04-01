@@ -4,11 +4,14 @@ init:
 	go version
 	tinygo version
 
-flash_lchika:
-	cd cmd/lchika && tinygo flash --target wioterminal
-
+#
 # games
-flash_marumarugame:
-	cd cmd/game/marumaru && tinygo flash --target wioterminal
-flash_timergame:
-	cd cmd/game/timer && tinygo flash --target wioterminal
+#
+_flash:
+	tinygo flash --size short --target wioterminal ./games/$(GAME_NAME)
+
+flash_timer:
+	GAME_NAME=timer $(MAKE) _flash
+
+flash_dropcircle:
+	GAME_NAME=dropcircle $(MAKE) _flash
