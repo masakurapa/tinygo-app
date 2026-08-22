@@ -15,3 +15,6 @@ flash_timer:
 
 flash_dropcircle:
 	GAME_NAME=dropcircle $(MAKE) _flash
+
+flash_poyopoyo:
+	GAME_NAME=poyopoyo $(MAKE) _flash
