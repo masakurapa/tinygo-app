@@ -1,14 +1,10 @@
-module github.com/masakurapa/tinygo-app/apps/timer
+module github.com/masakurapa/tinygo-app/apps/timecounter
 
-go 1.24.1
+go 1.26.7
 
-require (
-	github.com/sago35/koebiten v0.2.1
-	tinygo.org/x/drivers v0.30.0
-)
+require github.com/sago35/tinydisplay v0.3.0
 
 require (
-	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
-	tinygo.org/x/tinydraw v0.4.0 // indirect
-	tinygo.org/x/tinyfont v0.5.0 // indirect
+	fyne.io/fyne/v2 v2.2.3 // indirect
+	tinygo.org/x/drivers v0.21.0 // indirect
 )
