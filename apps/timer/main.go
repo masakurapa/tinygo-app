@@ -26,8 +26,11 @@ const (
 )
 
 var (
-	black = color.RGBA{0, 0, 0, 255}
-	white = color.RGBA{255, 255, 255, 255}
+	black  = color.RGBA{0, 0, 0, 255}
+	white  = color.RGBA{255, 255, 255, 255}
+	yellow = color.RGBA{240, 200, 50, 255}
+	red    = color.RGBA{200, 70, 70, 255}
+	gray   = color.RGBA{100, 110, 130, 255}
 
 	// timer setting
 	minutes = 5
@@ -38,16 +41,21 @@ var (
 
 	// timer mode setting
 	deadlineMilliseconds int64
+	halfLine             int64
+	tenthLine            int64
 	startTime            time.Time
 )
+
+type note struct {
+	tone     float64
+	duration float64
+}
 
 func main() {
 	disp := initDisplay()
 	lab := newLabel(320, 240)
 
 	for {
-		lab.FillScreen(white)
-
 		switch mode {
 		case modeSetting:
 			displaySettingMode(disp, lab)
@@ -67,6 +75,8 @@ func switchSettingMode() {
 func switchStartTimerMode() {
 	if mode != modeStopTimer {
 		deadlineMilliseconds = int64(minutes*60+seconds) * 1000
+		halfLine = deadlineMilliseconds / 2
+		tenthLine = deadlineMilliseconds / 10
 	}
 	startTime = time.Now()
 	mode = modeStartTimer
@@ -93,6 +103,7 @@ func displaySettingMode(disp *initdisplay.TinyDisplay, lab *label) {
 		time.Sleep(100 * time.Millisecond)
 	}()
 
+	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 20, "1:set / 2:start / 3:stop", black)
 
 	// show timer setting
@@ -156,6 +167,14 @@ func displayStartTimerMode(disp *initdisplay.TinyDisplay, lab *label) {
 	min := totalSeconds / 60
 	sec := totalSeconds % 60
 
+	if millisec <= tenthLine {
+		lab.FillScreen(red)
+	} else if millisec <= halfLine {
+		lab.FillScreen(yellow)
+	} else {
+		lab.FillScreen(white)
+	}
+
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 20, "1:set / 2:start / 3:stop", black)
 	tinyfont.WriteLine(lab, &freesans.Regular24pt7b, 90, 120, fmt.Sprintf("%02d : %02d", min, sec), black)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
@@ -176,6 +195,7 @@ func displayStopTimerMode(disp *initdisplay.TinyDisplay, lab *label) {
 	min := totalSeconds / 60
 	sec := totalSeconds % 60
 
+	lab.FillScreen(gray)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 20, "1:set / 2:start / 3:stop", black)
 	tinyfont.WriteLine(lab, &freesans.Regular24pt7b, 90, 120, fmt.Sprintf("%02d : %02d", min, sec), black)
 	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 120, 200, "stopped", black)
