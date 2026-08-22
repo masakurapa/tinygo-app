@@ -1,0 +1,8 @@
+services:
+  tinygo:
+    image: tinygo/tinygo:0.41.1
+    tty: true
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ["/bin/bash"]
