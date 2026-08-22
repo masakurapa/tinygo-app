@@ -1,7 +1,7 @@
 package game
 
 import (
-	"github.com/masakurapa/tinygo-app/internal/device"
+	"github.com/masakurapa/tinygo-app/apps/dropcircle/device"
 	"github.com/sago35/koebiten"
 	"tinygo.org/x/drivers/pixel"
 )

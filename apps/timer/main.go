@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/masakurapa/tinygo-app/games/timer/game"
+	"github.com/masakurapa/tinygo-app/apps/timer/game"
 	"github.com/sago35/koebiten"
 	"github.com/sago35/koebiten/hardware"
 )

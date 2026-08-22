@@ -17,9 +17,10 @@
   - constants use camelCase with descriptive prefixes
 - **Error Handling**: Simple return nil pattern
 - **Project Structure**:
-  - `games/[game_name]/game/game.go` - Game logic implementation
-  - `games/[game_name]/main.go` - Entry points
-  - `internal/` - Shared utilities
+  - `apps/[game_name]/game/game.go` - Game logic implementation
+  - `apps/[game_name]/main.go` - Entry points
+  - `apps/[game_name]/go.mod` - Per-app module definition
+  - `apps/[game_name]/device/alias.go` - Device key constants
 
 ## Technology Stack
 - Go 1.24.1

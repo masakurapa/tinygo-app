@@ -1,9 +1,8 @@
-module github.com/masakurapa/tinygo-app
+module github.com/masakurapa/tinygo-app/apps/timer
 
 go 1.24.1
 
 require (
-	github.com/jakecoffman/cp/v2 v2.1.0
 	github.com/sago35/koebiten v0.2.1
 	tinygo.org/x/drivers v0.30.0
 )

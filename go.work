@@ -1,0 +1,7 @@
+go 1.26.7
+
+use (
+	./apps/dropcircle
+	./apps/poyopoyo
+	./apps/timer
+)

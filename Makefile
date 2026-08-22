@@ -8,7 +8,7 @@ init:
 # games
 #
 _flash:
-	tinygo flash --size short --target wioterminal ./games/$(GAME_NAME)
+	tinygo flash --size short --target wioterminal ./apps/$(GAME_NAME)
 
 flash_timer:
 	GAME_NAME=timer $(MAKE) _flash
