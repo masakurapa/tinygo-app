@@ -5,7 +5,6 @@ import (
 	"image/color"
 	"time"
 
-	"github.com/sago35/tinydisplay/examples/initdisplay"
 	"tinygo.org/x/tinyfont"
 	"tinygo.org/x/tinyfont/freesans"
 )
@@ -30,7 +29,7 @@ var (
 	white  = color.RGBA{255, 255, 255, 255}
 	yellow = color.RGBA{240, 200, 50, 255}
 	red    = color.RGBA{200, 70, 70, 255}
-	gray   = color.RGBA{100, 110, 130, 255}
+	gray   = color.RGBA{160, 165, 175, 255}
 
 	// timer setting
 	minutes = 5
@@ -49,6 +48,10 @@ var (
 type note struct {
 	tone     float64
 	duration float64
+}
+
+type displayer interface {
+	DrawRGBBitmap(x, y int16, data []uint16, w, h int16) error
 }
 
 func main() {
@@ -92,7 +95,7 @@ func switchStopTimerMode() {
 	fmt.Println("switch stop timer mode")
 }
 
-func displaySettingMode(disp *initdisplay.TinyDisplay, lab *label) {
+func displaySettingMode(disp displayer, lab *label) {
 	// switch mode
 	if PressOption2() {
 		switchStartTimerMode()
@@ -114,6 +117,7 @@ func displaySettingMode(disp *initdisplay.TinyDisplay, lab *label) {
 	case settingSeconds:
 		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 178, 140, "---------", black)
 	}
+	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 125, 200, "setting", black)
 
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 
@@ -151,7 +155,7 @@ func displaySettingMode(disp *initdisplay.TinyDisplay, lab *label) {
 	}
 }
 
-func displayStartTimerMode(disp *initdisplay.TinyDisplay, lab *label) {
+func displayStartTimerMode(disp displayer, lab *label) {
 	if PressOption3() {
 		switchStopTimerMode()
 		return
@@ -180,7 +184,7 @@ func displayStartTimerMode(disp *initdisplay.TinyDisplay, lab *label) {
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 }
 
-func displayStopTimerMode(disp *initdisplay.TinyDisplay, lab *label) {
+func displayStopTimerMode(disp displayer, lab *label) {
 	if PressOption1() {
 		switchSettingMode()
 		return

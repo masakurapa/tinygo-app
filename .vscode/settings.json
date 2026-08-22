@@ -1,5 +1,5 @@
 {
-    // "go.buildTags": "wioterminal",
+    "go.buildTags": "wioterminal",
     "go.toolsEnvVars": {
         "GOOS": "linux",
         "GOARCH": "arm",

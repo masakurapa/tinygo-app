@@ -1,3 +1,5 @@
+//go:build !wioterminal
+
 package main
 
 import (
@@ -10,7 +12,7 @@ import (
 
 var display *initdisplay.TinyDisplay
 
-func initDisplay() *initdisplay.TinyDisplay {
+func initDisplay() displayer {
 	d, _ := tinydisplay.NewClient("host.docker.internal", 9812, 320, 240)
 
 	d.FillScreen(color.RGBA{0, 0, 0, 255})
@@ -28,9 +30,6 @@ func PressKeyRight() bool { return display.GetPressedKey() == 0x106 }
 func PressKeyLeft() bool  { return display.GetPressedKey() == 0x107 }
 func PressKeyDown() bool  { return display.GetPressedKey() == 0x108 }
 func PressKeyUp() bool    { return display.GetPressedKey() == 0x109 }
-
-// キー押し込み
-func PressEnter() bool { return display.GetPressedKey() == 0x101 }
 
 // Option 1（上部の左ボタン）
 func PressOption1() bool { return display.GetPressedKey() == '2' }
