@@ -32,11 +32,11 @@ func PressKeyUp() bool    { return display.GetPressedKey() == 0x109 }
 // キー押し込み
 func PressEnter() bool { return display.GetPressedKey() == 0x101 }
 
-// Option 1
-func PressOption1() bool { return display.GetPressedKey() == '0' }
+// Option 1（上部の左ボタン）
+func PressOption1() bool { return display.GetPressedKey() == '2' }
 
-// Option 2
+// Option 2（上部の中央ボタン）
 func PressOption2() bool { return display.GetPressedKey() == '1' }
 
-// Option 3
-func PressOption3() bool { return display.GetPressedKey() == '2' }
+// Option 3（上部の右）
+func PressOption3() bool { return display.GetPressedKey() == '0' }

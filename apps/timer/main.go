@@ -15,7 +15,8 @@ const (
 	// 時間の設定
 	modeSetting = iota
 	// タイマー
-	modeTimer
+	modeStartTimer
+	modeStopTimer
 )
 
 // 設定モード
@@ -34,6 +35,10 @@ var (
 	// current mode
 	mode    = modeSetting
 	setMode = settingMinutes
+
+	// timer mode setting
+	deadlineMilliseconds int64
+	startTime            time.Time
 )
 
 func main() {
@@ -45,16 +50,50 @@ func main() {
 
 		switch mode {
 		case modeSetting:
-			switchSettingMode(disp, lab)
-		case modeTimer:
+			displaySettingMode(disp, lab)
+		case modeStartTimer:
+			displayStartTimerMode(disp, lab)
+		case modeStopTimer:
+			displayStopTimerMode(disp, lab)
 		}
 	}
 }
 
-func switchSettingMode(disp *initdisplay.TinyDisplay, lab *label) {
+func switchSettingMode() {
+	mode = modeSetting
+	fmt.Println("switch setting mode")
+}
+
+func switchStartTimerMode() {
+	if mode != modeStopTimer {
+		deadlineMilliseconds = int64(minutes*60+seconds) * 1000
+	}
+	startTime = time.Now()
+	mode = modeStartTimer
+	fmt.Printf("switch start timer mode: %v\n", startTime)
+}
+
+func switchStopTimerMode() {
+	deadlineMilliseconds = deadlineMilliseconds - time.Now().Sub(startTime).Milliseconds()
+	if deadlineMilliseconds < 0 {
+		deadlineMilliseconds = 0
+	}
+	mode = modeStopTimer
+	fmt.Println("switch stop timer mode")
+}
+
+func displaySettingMode(disp *initdisplay.TinyDisplay, lab *label) {
+	// switch mode
+	if PressOption2() {
+		switchStartTimerMode()
+		return
+	}
+
 	defer func() {
 		time.Sleep(100 * time.Millisecond)
 	}()
+
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 20, "1:set / 2:start / 3:stop", black)
 
 	// show timer setting
 	tinyfont.WriteLine(lab, &freesans.Regular24pt7b, 90, 120, fmt.Sprintf("%02d : %02d", minutes, seconds), black)
@@ -99,6 +138,48 @@ func switchSettingMode(disp *initdisplay.TinyDisplay, lab *label) {
 		}
 		return
 	}
+}
+
+func displayStartTimerMode(disp *initdisplay.TinyDisplay, lab *label) {
+	if PressOption3() {
+		switchStopTimerMode()
+		return
+	}
+
+	dur := time.Now().Sub(startTime)
+	millisec := (deadlineMilliseconds - dur.Milliseconds())
+	if millisec < 0 {
+		millisec = 0
+	}
+
+	totalSeconds := millisec / 1000
+	min := totalSeconds / 60
+	sec := totalSeconds % 60
+
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 20, "1:set / 2:start / 3:stop", black)
+	tinyfont.WriteLine(lab, &freesans.Regular24pt7b, 90, 120, fmt.Sprintf("%02d : %02d", min, sec), black)
+	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
+}
+
+func displayStopTimerMode(disp *initdisplay.TinyDisplay, lab *label) {
+	if PressOption1() {
+		switchSettingMode()
+		return
+	}
+	if PressOption2() {
+		switchStartTimerMode()
+		return
+	}
+
+	// show timer setting
+	totalSeconds := deadlineMilliseconds / 1000
+	min := totalSeconds / 60
+	sec := totalSeconds % 60
+
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 20, "1:set / 2:start / 3:stop", black)
+	tinyfont.WriteLine(lab, &freesans.Regular24pt7b, 90, 120, fmt.Sprintf("%02d : %02d", min, sec), black)
+	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 120, 200, "stopped", black)
+	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 }
 
 func setAdjustedTimerSetting(newMin, newSec int) {
