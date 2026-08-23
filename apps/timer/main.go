@@ -45,11 +45,6 @@ var (
 	startTime            time.Time
 )
 
-type note struct {
-	tone     float64
-	duration float64
-}
-
 type displayer interface {
 	DrawRGBBitmap(x, y int16, data []uint16, w, h int16) error
 }
@@ -182,6 +177,10 @@ func displayStartTimerMode(disp displayer, lab *label) {
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 20, "1:set / 2:start / 3:stop", black)
 	tinyfont.WriteLine(lab, &freesans.Regular24pt7b, 90, 120, fmt.Sprintf("%02d : %02d", min, sec), black)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
+
+	if millisec == 0 {
+		Buzzer()
+	}
 }
 
 func displayStopTimerMode(disp displayer, lab *label) {

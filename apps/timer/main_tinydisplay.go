@@ -39,3 +39,5 @@ func PressOption2() bool { return display.GetPressedKey() == '1' }
 
 // Option 3（上部の右）
 func PressOption3() bool { return display.GetPressedKey() == '0' }
+
+func Buzzer() {}
