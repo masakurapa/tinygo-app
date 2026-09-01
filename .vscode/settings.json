@@ -1,7 +1,9 @@
 {
-    "go.buildTags": "tinygo",
+    "go.buildTags": "wioterminal",
     "go.toolsEnvVars": {
         "GOOS": "linux",
         "GOARCH": "arm",
+        "GOROOT": "/Users/sakuraba/Library/Caches/tinygo/goroot-91c94699cc7a65b80ac0a91d474ae9546ce771c23a4ca119e129ab56e682ee76",
+        "GOFLAGS": "-tags=cortexm,baremetal,linux,arm,atsamd51p19a,atsamd51p19,atsamd51,sam,wioterminal,tinygo,purego,osusergo,math_big_pure_go,gc.conservative,scheduler.tasks,serial.usb,tinygo.unicore"
     },
 }

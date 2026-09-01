@@ -2,6 +2,7 @@ go 1.26.7
 
 use (
 	./apps/dropcircle
+	./apps/gocon26
 	./apps/timergame
 	./apps/timer
 )

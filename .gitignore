@@ -1,2 +1,4 @@
 .ignore/
 *.uf2
+*.wasm
+wasm_exec.js
