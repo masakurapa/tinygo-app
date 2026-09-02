@@ -19,6 +19,16 @@ var (
 )
 
 func displayTitle(disp displayer, lab *label) {
+	// switch mode
+	if PressOption2() {
+		switchQR()
+		return
+	}
+	if PressOption3() {
+		switchGame()
+		return
+	}
+
 	scaled := lab.Scale(5)
 	scaled.FillScreen(white)
 
@@ -31,4 +41,9 @@ func displayTitle(disp displayer, lab *label) {
 	if titleX < titleMinX {
 		titleX = titleMaxX
 	}
+}
+
+func switchTitle() {
+	titleX = titleMaxX
+	currentMode = modeTitle
 }

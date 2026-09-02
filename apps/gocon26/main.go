@@ -4,9 +4,17 @@ import (
 	"image/color"
 )
 
+const (
+	modeTitle = iota
+	modeQR
+	modeGame
+)
+
 var (
 	black = color.RGBA{0, 0, 0, 255}
 	white = color.RGBA{255, 255, 255, 255}
+
+	currentMode = modeTitle
 )
 
 type displayer interface {
@@ -18,6 +26,13 @@ func main() {
 	lab := newLabel(320, 240)
 
 	for {
-		displayTitle(disp, lab)
+		switch currentMode {
+		case modeTitle:
+			displayTitle(disp, lab)
+		case modeQR:
+			displayQR(disp, lab)
+		case modeGame:
+			displayGame(disp, lab)
+		}
 	}
 }
