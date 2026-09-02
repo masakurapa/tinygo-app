@@ -55,7 +55,7 @@ func (l *label) FillScreen(c color.RGBA) {
 
 func (l *label) Scale(s int16) *label {
 	return &label{
-		buf:   make([]uint16, int(l.w)*int(l.h)),
+		buf:   l.buf,
 		w:     l.w,
 		h:     l.h,
 		scale: s,

@@ -40,13 +40,12 @@ func displayTitle(disp displayer, lab *label) {
 
 	scaled := lab.Scale(5)
 	scaled.FillScreen(white)
-
 	tinyfont.WriteLine(scaled, &freesans.Regular24pt7b, titleX, 40, currentTitleData.title, black)
 	disp.DrawRGBBitmap(0, 0, scaled.buf, scaled.w, scaled.h)
 
 	time.Sleep(16 * time.Millisecond)
 
-	titleX--
+	titleX -= 2
 	if titleX < currentTitleData.min {
 		switchCurrentTitle(currentTitle + 1)
 		time.Sleep(100 * time.Millisecond)

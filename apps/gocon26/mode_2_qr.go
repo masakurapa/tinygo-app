@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/skip2/go-qrcode"
 	"tinygo.org/x/tinyfont"
 	"tinygo.org/x/tinyfont/freesans"
 )
@@ -14,21 +13,21 @@ var (
 	qrList = []qrData{
 		{
 			title:  "Technical PR on X",
-			bitmap: makeQRBitmap("https://x.com/kaonavi_devs"),
+			bitmap: qrTechnicalPROnXBitmap(),
 			x:      44,
 			y:      26,
 			scale:  7,
 		},
 		{
 			title:  "Corporate website",
-			bitmap: makeQRBitmap("https://corp.kaonavi.jp/"),
+			bitmap: qrCorporateWebsiteBitmap(),
 			x:      44,
 			y:      26,
 			scale:  7,
 		},
 		{
 			title:  "Casual interview",
-			bitmap: makeQRBitmap("https://recruit.kaonavi.jp/recruit-info"),
+			bitmap: qrCasualInterviewBitmap(),
 			x:      48,
 			y:      30,
 			scale:  6,
@@ -91,10 +90,6 @@ func switchCurrentQR(i int) {
 	qrSwitch = true
 }
 
-func makeQRBitmap(url string) [][]bool {
-	q, _ := qrcode.New(url, qrcode.Low)
-	return q.Bitmap()
-}
 
 func drawBitmap(l *label, bitmap [][]bool, offsetX, offsetY, scale int16) {
 	for y, row := range bitmap {

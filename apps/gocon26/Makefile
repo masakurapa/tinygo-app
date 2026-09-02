@@ -6,3 +6,7 @@ build:
 
 display:
 	docker compose exec -w /app/apps/gocon26 tinygo go run .
+
+gen:
+	cd gen && GOWORK=off go run main.go gopher > ../gopher_data.go
+	cd gen && GOWORK=off go run main.go qr    > ../qr_data.go

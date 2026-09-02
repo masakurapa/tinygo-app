@@ -23,32 +23,50 @@ func displayGame(disp displayer, lab *label) {
 		return
 	}
 
-	lab.FillScreen(white)
-	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
-	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, 140, 40)
-
 	switch {
 	case gd.waiting():
-		tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 45, 120, "Press to start!!", black)
-
-		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 45, 200, "[<-] Move left / Move right [->]", black)
-
+		displayGameWaiting(disp, lab)
 	case gd.playing():
-
-		gd.countUp()
+		displayGamePlaying(disp, lab)
 	case gd.finished():
-		tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 65, 120, "Game Over!!", black)
+		displayGameFinished(disp, lab)
 	}
 
-	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 	time.Sleep(16 * time.Millisecond)
 }
 
 func switchGame() {
 	gd = gameData{
-		mode: gameModeWaiting,
+		mode: gameModeFinished,
 	}
 	currentMode = modeGame
+}
+
+func displayGameWaiting(disp displayer, lab *label) {
+	lab.FillScreen(white)
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
+	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, 140, 40)
+	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 45, 120, "Press to start!!", black)
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 45, 200, "[<-] Move left / Move right [->]", black)
+	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
+}
+
+func displayGamePlaying(disp displayer, lab *label) {
+	lab.FillScreen(white)
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
+	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, 140, 40)
+	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
+
+	gd.countUp()
+}
+
+func displayGameFinished(disp displayer, lab *label) {
+	lab.FillScreen(white)
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
+	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, 140, 40)
+	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 65, 120, "Game Over!!", black)
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 200, "Press the [top-right button] to go back", black)
+	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 }
 
 type gameData struct {
