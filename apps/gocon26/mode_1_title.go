@@ -7,16 +7,25 @@ import (
 	"tinygo.org/x/tinyfont/freesans"
 )
 
-const (
-	// x = 65 で完全に "k" が消える
-	titleMaxX int16 = 65
-	// x = -160 で完全に "i" が消える
-	titleMinX int16 = -160
+var (
+	titleX           int16
+	currentTitle     int
+	currentTitleData titleData
+
+	titleList = []titleData{
+		{title: "kaonavi", min: -170, max: 65},
+		{title: "Face you, Face next.", min: -440, max: 65},
+	}
 )
 
-var (
-	titleX int16 = titleMaxX
-)
+type titleData struct {
+	title    string
+	min, max int16
+}
+
+func init() {
+	switchCurrentTitle(0)
+}
 
 func displayTitle(disp displayer, lab *label) {
 	// switch mode
@@ -32,18 +41,34 @@ func displayTitle(disp displayer, lab *label) {
 	scaled := lab.Scale(5)
 	scaled.FillScreen(white)
 
-	tinyfont.WriteLine(scaled, &freesans.Regular24pt7b, titleX, 40, "kaonavi", black)
+	tinyfont.WriteLine(scaled, &freesans.Regular24pt7b, titleX, 40, currentTitleData.title, black)
 	disp.DrawRGBBitmap(0, 0, scaled.buf, scaled.w, scaled.h)
 
 	time.Sleep(16 * time.Millisecond)
 
 	titleX--
-	if titleX < titleMinX {
-		titleX = titleMaxX
+	if titleX < currentTitleData.min {
+		switchCurrentTitle(currentTitle + 1)
+		time.Sleep(100 * time.Millisecond)
 	}
 }
 
 func switchTitle() {
-	titleX = titleMaxX
+	switchCurrentTitle(0)
+	currentMode = modeTitle
+}
+
+func switchCurrentTitle(i int) {
+	if i < 0 {
+		i = len(titleList) - 1
+	}
+	if i >= len(titleList) {
+		i = 0
+	}
+
+	currentTitle = i
+	currentTitleData = titleList[i]
+	titleX = currentTitleData.max
+
 	currentMode = modeTitle
 }

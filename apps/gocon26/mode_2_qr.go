@@ -12,9 +12,9 @@ var (
 	qrSwitch      bool
 
 	qrList = []qrData{
-		qrData{title: "Technical PR on X", url: "https://x.com/kaonavi_devs", x: 44, y: 26, scale: 7},
-		qrData{title: "Corporate website", url: "https://corp.kaonavi.jp/", x: 44, y: 26, scale: 7},
-		qrData{title: "Casual interview", url: "https://recruit.kaonavi.jp/recruit-info", x: 48, y: 30, scale: 6},
+		{title: "Technical PR on X", url: "https://x.com/kaonavi_devs", x: 44, y: 26, scale: 7},
+		{title: "Corporate website", url: "https://corp.kaonavi.jp/", x: 44, y: 26, scale: 7},
+		{title: "Casual interview", url: "https://recruit.kaonavi.jp/recruit-info", x: 48, y: 30, scale: 6},
 	}
 )
 
