@@ -26,7 +26,7 @@ var (
 			scale:  7,
 		},
 		{
-			title:  "Casual interview",
+			title:  " Casual  interview",
 			bitmap: qrCasualInterviewBitmap(),
 			x:      48,
 			y:      30,
@@ -66,7 +66,7 @@ func displayQR(disp displayer, lab *label) {
 	}
 
 	lab.FillScreen(white)
-	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 62, 20, currentQRData.title, black)
+	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 62, 24, currentQRData.title, black)
 	drawBitmap(lab, currentQRData.bitmap, currentQRData.x, currentQRData.y, currentQRData.scale)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 	qrSwitch = false
@@ -89,7 +89,6 @@ func switchCurrentQR(i int) {
 	currentQRData = qrList[i]
 	qrSwitch = true
 }
-
 
 func drawBitmap(l *label, bitmap [][]bool, offsetX, offsetY, scale int16) {
 	for y, row := range bitmap {

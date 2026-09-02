@@ -8,6 +8,11 @@ import (
 	"tinygo.org/x/tinyfont/freesans"
 )
 
+const (
+	defaultGopherPositionX int16 = 140
+	gopherMovePixel        int16 = 10
+)
+
 var (
 	gd gameData
 )
@@ -37,24 +42,32 @@ func displayGame(disp displayer, lab *label) {
 
 func switchGame() {
 	gd = gameData{
-		mode: gameModeFinished,
+		mode: gameModeWaiting,
+		pos:  defaultGopherPositionX,
 	}
 	currentMode = modeGame
 }
 
 func displayGameWaiting(disp displayer, lab *label) {
+	if PressKeyLeft() {
+		gd.moveLeft()
+	}
+	if PressKeyRight() {
+		gd.moveRight()
+	}
+
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
-	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, 140, 40)
-	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 45, 120, "Press to start!!", black)
-	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 45, 200, "[<-] Move left / Move right [->]", black)
+	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, gd.pos, 60)
+	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 15, 140, "Push stick to start!!", black)
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 45, 210, "[<-] Move left / Move right [->]", black)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 }
 
 func displayGamePlaying(disp displayer, lab *label) {
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
-	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, 140, 40)
+	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, gd.pos, 60)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 
 	gd.countUp()
@@ -63,14 +76,17 @@ func displayGamePlaying(disp displayer, lab *label) {
 func displayGameFinished(disp displayer, lab *label) {
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
-	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, 140, 40)
-	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 65, 120, "Game Over!!", black)
-	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 200, "Press the [top-right button] to go back", black)
+	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, gd.pos, 60)
+	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 65, 140, "Game Over!!", black)
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 210, "Press the [top-right button] to go back", black)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 }
 
 type gameData struct {
 	mode int8
+
+	// gopher position X
+	pos int16
 
 	score    int
 	interval int8
@@ -93,6 +109,20 @@ func (gd *gameData) countUp() {
 		gd.interval = 0
 	}
 	gd.interval++
+}
+
+func (gd *gameData) moveLeft() {
+	gd.pos -= gopherMovePixel
+	if gd.pos <= 10 {
+		gd.pos = 10
+	}
+}
+
+func (gd *gameData) moveRight() {
+	gd.pos += gopherMovePixel
+	if gd.pos >= 280 {
+		gd.pos = 280
+	}
 }
 
 func (gd *gameData) waiting() bool {
