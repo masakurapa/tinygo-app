@@ -12,15 +12,33 @@ var (
 	qrSwitch      bool
 
 	qrList = []qrData{
-		{title: "Technical PR on X", url: "https://x.com/kaonavi_devs", x: 44, y: 26, scale: 7},
-		{title: "Corporate website", url: "https://corp.kaonavi.jp/", x: 44, y: 26, scale: 7},
-		{title: "Casual interview", url: "https://recruit.kaonavi.jp/recruit-info", x: 48, y: 30, scale: 6},
+		{
+			title:  "Technical PR on X",
+			bitmap: makeQRBitmap("https://x.com/kaonavi_devs"),
+			x:      44,
+			y:      26,
+			scale:  7,
+		},
+		{
+			title:  "Corporate website",
+			bitmap: makeQRBitmap("https://corp.kaonavi.jp/"),
+			x:      44,
+			y:      26,
+			scale:  7,
+		},
+		{
+			title:  "Casual interview",
+			bitmap: makeQRBitmap("https://recruit.kaonavi.jp/recruit-info"),
+			x:      48,
+			y:      30,
+			scale:  6,
+		},
 	}
 )
 
 type qrData struct {
 	title       string
-	url         string
+	bitmap      [][]bool
 	x, y, scale int16
 }
 
@@ -48,11 +66,9 @@ func displayQR(disp displayer, lab *label) {
 		return
 	}
 
-	q, _ := qrcode.New(currentQRData.url, qrcode.Low)
-
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 62, 20, currentQRData.title, black)
-	drawBitmap(lab, q.Bitmap(), currentQRData.x, currentQRData.y, currentQRData.scale)
+	drawBitmap(lab, currentQRData.bitmap, currentQRData.x, currentQRData.y, currentQRData.scale)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 	qrSwitch = false
 }
@@ -73,6 +89,11 @@ func switchCurrentQR(i int) {
 	currentQR = i
 	currentQRData = qrList[i]
 	qrSwitch = true
+}
+
+func makeQRBitmap(url string) [][]bool {
+	q, _ := qrcode.New(url, qrcode.Low)
+	return q.Bitmap()
 }
 
 func drawBitmap(l *label, bitmap [][]bool, offsetX, offsetY, scale int16) {
