@@ -36,6 +36,17 @@ func (l *label) SetPixel(x, y int16, c color.RGBA) {
 	}
 }
 
+func (l *label) DrawBitmap(src []uint16, srcW, srcH, x, y int16) {
+	for sy := int16(0); sy < srcH; sy++ {
+		for sx := int16(0); sx < srcW; sx++ {
+			px, py := x+sx, y+sy
+			if px >= 0 && px < l.w && py >= 0 && py < l.h {
+				l.buf[py*l.w+px] = src[sy*srcW+sx]
+			}
+		}
+	}
+}
+
 func (l *label) FillScreen(c color.RGBA) {
 	for i := range l.buf {
 		l.buf[i] = rgbaTo565(c)
