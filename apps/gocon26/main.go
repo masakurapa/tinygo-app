@@ -24,7 +24,14 @@ var (
 
 type displayer interface {
 	DrawRGBBitmap(x, y int16, data []uint16, w, h int16) error
-	FillScreen(c color.Color)
+	FillScreen(c color.RGBA)
+}
+
+func waitRelease(pressed func() bool) {
+	for pressed() {
+		time.Sleep(frame * time.Millisecond)
+	}
+	time.Sleep(frame * 3 * time.Millisecond)
 }
 
 func main() {

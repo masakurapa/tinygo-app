@@ -92,6 +92,7 @@ func displayQR(disp displayer, lab *label) {
 func switchQR() {
 	switchCurrentQR(0)
 	currentMode = modeQR
+	waitRelease(PressOption2)
 }
 
 func switchQRMode(disp displayer, lab *label) {

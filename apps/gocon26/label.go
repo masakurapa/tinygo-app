@@ -10,9 +10,11 @@ type label struct {
 	scale int16
 }
 
+var screenBuf [320 * 240]uint16
+
 func newLabel(w, h int16) *label {
 	return &label{
-		buf:   make([]uint16, int(w)*int(h)),
+		buf:   screenBuf[:int(w)*int(h)],
 		w:     w,
 		h:     h,
 		scale: 1,
@@ -42,6 +44,19 @@ func (l *label) DrawBitmap(src []uint16, srcW, srcH, x, y int16) {
 			px, py := x+sx, y+sy
 			if px >= 0 && px < l.w && py >= 0 && py < l.h {
 				l.buf[py*l.w+px] = src[sy*srcW+sx]
+			}
+		}
+	}
+}
+
+func (l *label) DrawBitmapFromRaw(raw string, srcW, srcH, x, y int16) {
+	for sy := int16(0); sy < srcH; sy++ {
+		for sx := int16(0); sx < srcW; sx++ {
+			i := (int(sy)*int(srcW) + int(sx)) * 2
+			pixel := uint16(raw[i]) | uint16(raw[i+1])<<8
+			px, py := x+sx, y+sy
+			if px >= 0 && px < l.w && py >= 0 && py < l.h {
+				l.buf[py*l.w+px] = pixel
 			}
 		}
 	}

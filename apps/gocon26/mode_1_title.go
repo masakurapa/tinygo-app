@@ -1,11 +1,8 @@
 package main
 
 import (
-	"bytes"
-	_ "embed"
 	"time"
 
-	"tinygo.org/x/drivers/image/png"
 	"tinygo.org/x/tinyfont"
 	"tinygo.org/x/tinyfont/freesans"
 )
@@ -26,10 +23,6 @@ var (
 		{title: "kaonavi", min: -170, max: 65},
 		{title: "Face you, Face next.", min: -440, max: 65},
 	}
-
-	//go:embed image.png
-	myGopher []byte
-	buf      [3 * 9 * 9 * 4]uint16
 )
 
 type titleData struct {
@@ -39,6 +32,7 @@ type titleData struct {
 
 func init() {
 	switchCurrentTitle(0)
+	currentMode = modeTitle
 }
 
 func displayTitle(disp displayer, lab *label) {
@@ -77,6 +71,7 @@ func switchTitle() {
 	switchCurrentTitle(0)
 	titleMode = titleModeCorp
 	currentMode = modeTitle
+	waitRelease(PressOption1)
 }
 
 func switchTitleMode(disp displayer, lab *label) {
@@ -93,15 +88,23 @@ func switchTitleMode(disp displayer, lab *label) {
 
 	// titleModeMeへの切り替え時は、1回だけ画像描画する
 	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 90, 25, "masakurapa", black)
+	drawMyGopher(lab)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 
-	img := bytes.NewReader(myGopher)
-	png.SetCallback(buf[:], func(data []uint16, x, y, w, h, width, height int16) {
-		disp.DrawRGBBitmap(x+60, y+40, data[:w*h], w, h)
-	})
-	png.Decode(img)
-
 	titleMode = titleModeMe
+}
+
+func drawMyGopher(lab *label) {
+	for sy := int16(0); sy < myGopherH; sy++ {
+		for sx := int16(0); sx < myGopherW; sx++ {
+			i := (int(sy)*int(myGopherW) + int(sx)) * 2
+			pixel := uint16(myGopherRaw[i]) | uint16(myGopherRaw[i+1])<<8
+			px, py := int16(60)+sx, int16(40)+sy
+			if px >= 0 && px < lab.w && py >= 0 && py < lab.h {
+				lab.buf[int(py)*int(lab.w)+int(px)] = pixel
+			}
+		}
+	}
 }
 
 func switchCurrentTitle(i int) {
@@ -115,6 +118,4 @@ func switchCurrentTitle(i int) {
 	currentTitle = i
 	currentTitleData = titleList[i]
 	titleX = currentTitleData.max
-
-	currentMode = modeTitle
 }

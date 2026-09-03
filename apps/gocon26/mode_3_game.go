@@ -46,6 +46,7 @@ func switchGame() {
 		pos:  defaultGopherPositionX,
 	}
 	currentMode = modeGame
+	waitRelease(PressOption3)
 }
 
 func displayGameWaiting(disp displayer, lab *label) {
@@ -58,7 +59,7 @@ func displayGameWaiting(disp displayer, lab *label) {
 
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
-	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, gd.pos, 60)
+	lab.DrawBitmapFromRaw(gopherRaw, gopherW, gopherH, gd.pos, 60)
 	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 15, 140, "Push stick to start!!", black)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 45, 210, "[<-] Move left / Move right [->]", black)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
@@ -67,7 +68,7 @@ func displayGameWaiting(disp displayer, lab *label) {
 func displayGamePlaying(disp displayer, lab *label) {
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
-	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, gd.pos, 60)
+	lab.DrawBitmapFromRaw(gopherRaw, gopherW, gopherH, gd.pos, 60)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 
 	gd.countUp()
@@ -76,7 +77,7 @@ func displayGamePlaying(disp displayer, lab *label) {
 func displayGameFinished(disp displayer, lab *label) {
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
-	lab.DrawBitmap(gopherBitmap, gopherW, gopherH, gd.pos, 60)
+	lab.DrawBitmapFromRaw(gopherRaw, gopherW, gopherH, gd.pos, 60)
 	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 65, 140, "Game Over!!", black)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 210, "Press the [top-right button] to go back", black)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
