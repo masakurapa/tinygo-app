@@ -72,6 +72,7 @@ var qrEntries = []qrEntry{
 	{"TechnicalPROnX", "https://x.com/kaonavi_devs"},
 	{"CorporateWebsite", "https://corp.kaonavi.jp/"},
 	{"CasualInterview", "https://recruit.kaonavi.jp/recruit-info"},
+	{"MyX", "https://x.com/masakurapa"},
 }
 
 func genQR() {

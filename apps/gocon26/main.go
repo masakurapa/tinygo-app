@@ -2,12 +2,17 @@ package main
 
 import (
 	"image/color"
+	"time"
 )
 
 const (
 	modeTitle = iota
 	modeQR
 	modeGame
+)
+
+const (
+	frame = 16
 )
 
 var (
@@ -19,6 +24,7 @@ var (
 
 type displayer interface {
 	DrawRGBBitmap(x, y int16, data []uint16, w, h int16) error
+	FillScreen(c color.Color)
 }
 
 func main() {
@@ -34,5 +40,6 @@ func main() {
 		case modeGame:
 			displayGame(disp, lab)
 		}
+		time.Sleep(frame * time.Millisecond)
 	}
 }

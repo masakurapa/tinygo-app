@@ -1,13 +1,21 @@
 package main
 
 import (
+	"time"
+
 	"tinygo.org/x/tinyfont"
 	"tinygo.org/x/tinyfont/freesans"
+)
+
+const (
+	qrModeCorp uint8 = iota
+	qrModeMe
 )
 
 var (
 	currentQRData qrData
 	currentQR     int
+	qrMode        uint8
 	qrSwitch      bool
 
 	qrList = []qrData{
@@ -47,8 +55,17 @@ func displayQR(disp displayer, lab *label) {
 		switchTitle()
 		return
 	}
+	if PressOption2() {
+		switchQRMode(disp, lab)
+		return
+	}
 	if PressOption3() {
 		switchGame()
+		return
+	}
+
+	// qrModeMeでの再描画はしない
+	if qrMode == qrModeMe {
 		return
 	}
 
@@ -77,7 +94,28 @@ func switchQR() {
 	currentMode = modeQR
 }
 
+func switchQRMode(disp displayer, lab *label) {
+	lab.FillScreen(white)
+
+	defer time.Sleep(frame * 10 * time.Millisecond)
+
+	if qrMode == qrModeMe {
+		switchCurrentQR(0)
+		qrMode = qrModeCorp
+		return
+	}
+
+	// qrModeMeへの切り替え時は、1回だけ画像描画する
+	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 76, 24, "masakurapa (X)", black)
+	drawBitmap(lab, qrMyXBitmap(), 44, 26, 7)
+	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
+
+	qrMode = qrModeMe
+}
+
 func switchCurrentQR(i int) {
+	defer time.Sleep(frame * 10 * time.Millisecond)
+
 	if i < 0 {
 		i = len(qrList) - 1
 	}

@@ -137,3 +137,47 @@ func qrCasualInterviewBitmap() [][]bool {
 	return out
 }
 
+var qrBitmapMyX = [33][33]bool{
+	{false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,},
+	{false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,},
+	{false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,},
+	{false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,},
+	{false,false,false,false,true,true,true,true,true,true,true,false,false,false,true,false,false,false,true,true,false,false,true,true,true,true,true,true,true,false,false,false,false,},
+	{false,false,false,false,true,false,false,false,false,false,true,false,false,true,false,false,false,true,false,true,true,false,true,false,false,false,false,false,true,false,false,false,false,},
+	{false,false,false,false,true,false,true,true,true,false,true,false,true,false,false,true,false,false,false,true,true,false,true,false,true,true,true,false,true,false,false,false,false,},
+	{false,false,false,false,true,false,true,true,true,false,true,false,false,true,false,false,true,false,true,true,true,false,true,false,true,true,true,false,true,false,false,false,false,},
+	{false,false,false,false,true,false,true,true,true,false,true,false,false,true,false,false,true,true,true,true,false,false,true,false,true,true,true,false,true,false,false,false,false,},
+	{false,false,false,false,true,false,false,false,false,false,true,false,false,false,true,true,true,false,false,true,true,false,true,false,false,false,false,false,true,false,false,false,false,},
+	{false,false,false,false,true,true,true,true,true,true,true,false,true,false,true,false,true,false,true,false,true,false,true,true,true,true,true,true,true,false,false,false,false,},
+	{false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,true,false,true,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false,},
+	{false,false,false,false,true,true,true,false,true,true,true,true,true,false,false,false,true,true,false,false,true,true,true,false,false,false,true,false,false,false,false,false,false,},
+	{false,false,false,false,false,true,true,false,false,false,false,false,false,true,false,true,true,true,true,false,true,true,true,true,false,false,false,false,true,false,false,false,false,},
+	{false,false,false,false,true,true,false,true,true,true,true,false,true,false,true,true,true,false,false,false,false,true,false,false,true,false,true,true,true,false,false,false,false,},
+	{false,false,false,false,false,true,true,false,true,false,false,false,true,true,true,false,true,true,true,true,true,true,true,true,true,false,false,true,false,false,false,false,false,},
+	{false,false,false,false,true,false,false,true,true,false,true,true,false,false,true,true,false,true,false,true,true,true,true,true,false,true,false,true,true,false,false,false,false,},
+	{false,false,false,false,false,true,false,false,true,false,false,true,true,true,true,true,false,true,true,false,true,true,true,false,false,true,false,false,true,false,false,false,false,},
+	{false,false,false,false,true,false,true,false,true,false,true,true,false,true,false,false,false,true,true,false,false,false,true,true,false,false,true,true,true,false,false,false,false,},
+	{false,false,false,false,false,true,true,false,true,false,false,true,false,false,true,true,false,true,false,false,true,false,true,false,true,false,false,true,false,false,false,false,false,},
+	{false,false,false,false,true,false,true,false,true,true,true,true,false,false,false,false,true,true,false,true,true,true,true,true,true,true,false,false,false,false,false,false,false,},
+	{false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,true,true,true,false,true,true,false,false,false,true,true,false,true,true,false,false,false,false,},
+	{false,false,false,false,true,true,true,true,true,true,true,false,true,true,true,true,true,false,true,true,true,false,true,false,true,true,false,true,true,false,false,false,false,},
+	{false,false,false,false,true,false,false,false,false,false,true,false,true,false,true,false,true,true,true,true,true,false,false,false,true,true,false,true,false,false,false,false,false,},
+	{false,false,false,false,true,false,true,true,true,false,true,false,true,true,true,true,true,true,false,false,true,true,true,true,true,true,false,false,false,false,false,false,false,},
+	{false,false,false,false,true,false,true,true,true,false,true,false,false,false,false,true,false,true,true,false,false,false,false,true,true,true,true,false,false,false,false,false,false,},
+	{false,false,false,false,true,false,true,true,true,false,true,false,true,false,false,false,false,false,true,true,false,false,false,false,true,false,false,false,true,false,false,false,false,},
+	{false,false,false,false,true,false,false,false,false,false,true,false,true,true,true,true,false,true,false,true,true,false,true,false,true,true,false,true,false,false,false,false,false,},
+	{false,false,false,false,true,true,true,true,true,true,true,false,true,true,true,false,true,true,false,true,true,true,false,true,false,false,false,true,true,false,false,false,false,},
+	{false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,},
+	{false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,},
+	{false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,},
+	{false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,},
+}
+
+func qrMyXBitmap() [][]bool {
+	out := make([][]bool, 33)
+	for i := range qrBitmapMyX {
+		out[i] = qrBitmapMyX[i][:]
+	}
+	return out
+}
+
