@@ -141,7 +141,6 @@ func displayGamePlaying(disp displayer, lab *label) {
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 200, 15, fmt.Sprintf("Accel: %f", AccelY()), black)
-	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, gd.pos, 65)
 
 	// view wall
 	for i, w := range gd.walls {
@@ -149,6 +148,7 @@ func displayGamePlaying(disp displayer, lab *label) {
 		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, wallBasePositionY+(w*wallMoveStepX), int16(50+i*20), wallStr, black)
 	}
 
+	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, gd.pos, 65)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 	gd.checkCollision()
 	gd.countUp()

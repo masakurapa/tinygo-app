@@ -84,8 +84,8 @@ func displayQR(disp displayer, lab *label) {
 	}
 
 	lab.FillScreen(white)
-	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 62, 24, currentQRData.title, black)
 	drawBitmap(lab, currentQRData.bitmap, currentQRData.x, currentQRData.y, currentQRData.scale)
+	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 62, 24, currentQRData.title, black)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 	qrSwitch = false
 }
@@ -108,8 +108,8 @@ func switchQRMode(disp displayer, lab *label) {
 	}
 
 	// qrModeMeへの切り替え時は、1回だけ画像描画する
-	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 76, 24, "masakurapa (X)", black)
 	drawBitmap(lab, img.QrMyXBitmap(), 44, 26, 7)
+	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 76, 24, "masakurapa (X)", black)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 
 	qrMode = qrModeMe
