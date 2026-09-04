@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand/v2"
+	"time"
 
 	"github.com/masakurapa/tinygo-app/apps/gocon26/img"
 	"tinygo.org/x/tinyfont"
@@ -20,6 +21,13 @@ const (
 
 	wallMinMove = -6
 	wallMaxMove = 6
+
+	// gopherのY範囲（65〜97）と重なる壁インデックス
+	wallCollisionIndexMin = 1
+	wallCollisionIndexMax = 2
+
+	// "==" の文字幅（ピクセル、要調整）
+	wallTextWidth int16 = 20
 )
 
 var (
@@ -94,6 +102,7 @@ func displayGamePlaying(disp displayer, lab *label) {
 	}
 
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
+	gd.checkCollision()
 	gd.countUp()
 	gd.nextWall()
 }
@@ -114,7 +123,7 @@ func displayGameFinished(disp displayer, lab *label) {
 
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
-	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, gd.pos, 65)
+	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, defaultGopherPositionX, 65)
 	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 65, 140, "Game Over!!", black)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 210, "Press the [top-right button] to go back", black)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
@@ -147,8 +156,8 @@ func (gd *gameData) countUp() {
 	}
 
 	// 10フレームに1回でステータス加算するイメージ
-	if gd.interval > 10 {
-		gd.score += 100
+	if gd.interval > 5 {
+		gd.score += 50
 		gd.interval = 0
 	}
 	gd.interval++
@@ -251,6 +260,26 @@ func (gd *gameData) wallIntervalThreshold() int8 {
 		return 9
 	default:
 		return 10
+	}
+}
+func (gd *gameData) checkCollision() {
+	if !gd.playing() {
+		return
+	}
+
+	gopherLeft := gd.pos
+	gopherRight := gd.pos + img.GopherW
+
+	for i := wallCollisionIndexMin; i <= wallCollisionIndexMax; i++ {
+		w := gd.walls[i]
+		leftWallRight := int16(wallBasePositionX) + w*wallMoveStepX + wallTextWidth
+		rightWallLeft := int16(wallBasePositionY) + w*wallMoveStepX
+
+		if gopherLeft < leftWallRight || gopherRight > rightWallLeft {
+			time.Sleep(1 * time.Second)
+			gd.switchMode(gameModeFinished)
+			return
+		}
 	}
 }
 
