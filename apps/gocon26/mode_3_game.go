@@ -31,7 +31,8 @@ const (
 )
 
 var (
-	gd gameData
+	gd           gameData
+	gameHiScores = make([]int, 20)
 )
 
 func displayGame(disp displayer, lab *label) {
@@ -42,6 +43,8 @@ func displayGame(disp displayer, lab *label) {
 		displayGamePlaying(disp, lab)
 	case gd.finished():
 		displayGameFinished(disp, lab)
+	case gd.hiScore():
+		displayGameHiScores(disp, lab)
 	}
 }
 
@@ -63,6 +66,11 @@ func displayGameWaiting(disp displayer, lab *label) {
 		switchQR()
 		return
 	}
+	if PressOption3() {
+		gd.switchMode(gameModeHiScore)
+		waitRelease(PressOption3)
+		return
+	}
 
 	if PressKeyLeft() {
 		gd.moveLeft()
@@ -72,6 +80,7 @@ func displayGameWaiting(disp displayer, lab *label) {
 	}
 	if PressEnter() {
 		gd.switchMode(gameModePlaying)
+		waitRelease(PressEnter)
 		return
 	}
 
@@ -118,6 +127,7 @@ func displayGameFinished(disp displayer, lab *label) {
 	}
 	if PressOption3() {
 		gd.switchMode(gameModeWaiting)
+		waitRelease(PressOption3)
 		return
 	}
 
@@ -126,6 +136,45 @@ func displayGameFinished(disp displayer, lab *label) {
 	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, defaultGopherPositionX, 65)
 	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 65, 140, "Game Over!!", black)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 210, "Press the [top-right button] to go back", black)
+	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
+}
+
+func displayGameHiScores(disp displayer, lab *label) {
+	if PressOption1() {
+		switchTitle()
+		return
+	}
+	if PressOption2() {
+		switchQR()
+		return
+	}
+	if PressOption3() {
+		gd.switchMode(gameModeWaiting)
+		waitRelease(PressOption3)
+		return
+	}
+
+	lab.FillScreen(white)
+	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, 10, 10)
+
+	for i, s := range gameHiScores {
+		rank := i + 1
+		y := 24 * (i % 10)
+
+		// 1列10個まで
+		if rank <= 10 {
+			if rank < 10 {
+				tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 60, int16(16+y), fmt.Sprintf("  %d.", rank), black)
+			} else {
+				tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 60, int16(16+y), fmt.Sprintf("%d.", rank), black)
+			}
+			tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 100, int16(16+y), fmt.Sprintf("%d", s), black)
+		} else {
+			tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 200, int16(16+y), fmt.Sprintf("%d.", rank), black)
+			tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 240, int16(16+y), fmt.Sprintf("%d", s), black)
+		}
+	}
+
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 }
 
@@ -148,6 +197,7 @@ const (
 	gameModeWaiting int8 = iota
 	gameModePlaying
 	gameModeFinished
+	gameModeHiScore
 )
 
 func (gd *gameData) countUp() {
@@ -167,6 +217,7 @@ func (gd *gameData) switchMode(m int8) {
 	gd.mode = m
 	if m == gameModePlaying {
 		gd.walls = make([]int16, 10)
+		return
 	}
 
 	if m == gameModeWaiting {
@@ -283,8 +334,20 @@ func (gd *gameData) checkCollision() {
 
 		if gopherLeft < leftWallRight || gopherRight > rightWallLeft {
 			time.Sleep(1 * time.Second)
+			gd.updateHiScore()
 			gd.switchMode(gameModeFinished)
 			return
+		}
+	}
+}
+
+func (gd *gameData) updateHiScore() {
+	score := gd.score
+	for i := range 20 {
+		if score > gameHiScores[i] {
+			tmp := gameHiScores[i]
+			gameHiScores[i] = score
+			score = tmp
 		}
 	}
 }
@@ -313,4 +376,8 @@ func (gd *gameData) playing() bool {
 
 func (gd *gameData) finished() bool {
 	return gd.mode == gameModeFinished
+}
+
+func (gd *gameData) hiScore() bool {
+	return gd.mode == gameModeHiScore
 }
