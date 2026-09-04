@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 
+	"github.com/masakurapa/tinygo-app/apps/gocon26/img"
 	"tinygo.org/x/tinyfont"
 	"tinygo.org/x/tinyfont/freesans"
 )
@@ -95,10 +96,10 @@ func switchTitleMode(disp displayer, lab *label) {
 }
 
 func drawMyGopher(lab *label) {
-	for sy := int16(0); sy < myGopherH; sy++ {
-		for sx := int16(0); sx < myGopherW; sx++ {
-			i := (int(sy)*int(myGopherW) + int(sx)) * 2
-			pixel := uint16(myGopherRaw[i]) | uint16(myGopherRaw[i+1])<<8
+	for sy := int16(0); sy < img.MyGopherH; sy++ {
+		for sx := int16(0); sx < img.MyGopherW; sx++ {
+			i := (int(sy)*int(img.MyGopherW) + int(sx)) * 2
+			pixel := uint16(img.MyGopherRaw[i]) | uint16(img.MyGopherRaw[i+1])<<8
 			px, py := int16(60)+sx, int16(40)+sy
 			if px >= 0 && px < lab.w && py >= 0 && py < lab.h {
 				lab.buf[int(py)*int(lab.w)+int(px)] = pixel

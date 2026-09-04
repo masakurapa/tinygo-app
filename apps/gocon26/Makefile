@@ -10,6 +10,7 @@ display:
 	docker compose exec -w /app/apps/gocon26 tinygo go run .
 
 gen:
-	docker compose exec -w /app/apps/gocon26/gen tinygo sh -c "GOWORK=off /usr/local/go/bin/go run main.go gopher    > ../gopher_data.go"
-	docker compose exec -w /app/apps/gocon26/gen tinygo sh -c "GOWORK=off /usr/local/go/bin/go run main.go qr        > ../qr_data.go"
-	docker compose exec -w /app/apps/gocon26/gen tinygo sh -c "GOWORK=off /usr/local/go/bin/go run main.go mygopher  > ../mygopher_data.go"
+	docker compose exec -w /app/apps/gocon26 tinygo sh -c "mkdir -p img"
+	docker compose exec -w /app/apps/gocon26/gen tinygo sh -c "GOWORK=off /usr/local/go/bin/go run main.go gopher    > ../img/gopher_data.go"
+	docker compose exec -w /app/apps/gocon26/gen tinygo sh -c "GOWORK=off /usr/local/go/bin/go run main.go qr        > ../img/qr_data.go"
+	docker compose exec -w /app/apps/gocon26/gen tinygo sh -c "GOWORK=off /usr/local/go/bin/go run main.go mygopher  > ../img/mygopher_data.go"

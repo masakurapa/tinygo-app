@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 
+	"github.com/masakurapa/tinygo-app/apps/gocon26/img"
 	"tinygo.org/x/tinyfont"
 	"tinygo.org/x/tinyfont/freesans"
 )
@@ -21,21 +22,21 @@ var (
 	qrList = []qrData{
 		{
 			title:  "Technical PR on X",
-			bitmap: qrTechnicalPROnXBitmap(),
+			bitmap: img.QrTechnicalPROnXBitmap(),
 			x:      44,
 			y:      26,
 			scale:  7,
 		},
 		{
 			title:  "Corporate website",
-			bitmap: qrCorporateWebsiteBitmap(),
+			bitmap: img.QrCorporateWebsiteBitmap(),
 			x:      44,
 			y:      26,
 			scale:  7,
 		},
 		{
 			title:  " Casual  interview",
-			bitmap: qrCasualInterviewBitmap(),
+			bitmap: img.QrCasualInterviewBitmap(),
 			x:      48,
 			y:      30,
 			scale:  6,
@@ -108,7 +109,7 @@ func switchQRMode(disp displayer, lab *label) {
 
 	// qrModeMeへの切り替え時は、1回だけ画像描画する
 	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 76, 24, "masakurapa (X)", black)
-	drawBitmap(lab, qrMyXBitmap(), 44, 26, 7)
+	drawBitmap(lab, img.QrMyXBitmap(), 44, 26, 7)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 
 	qrMode = qrModeMe
