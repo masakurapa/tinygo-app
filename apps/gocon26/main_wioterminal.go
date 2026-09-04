@@ -5,9 +5,7 @@ package main
 import (
 	"image/color"
 	"machine"
-	"time"
 
-	"tinygo.org/x/drivers/buzzer"
 	"tinygo.org/x/drivers/ili9341"
 )
 
@@ -17,39 +15,19 @@ type note struct {
 }
 
 var (
-	rightButton machine.Pin
-	leftButton  machine.Pin
-	downButton  machine.Pin
-	upButton    machine.Pin
-	opt1Button  machine.Pin
-	opt2Button  machine.Pin
-	opt3Button  machine.Pin
-
-	bzr         buzzer.Device
-	buzzerNotes = []note{
-		{buzzer.C4, buzzer.Quarter},
-		{buzzer.F4, buzzer.Half},
-		{buzzer.F4, buzzer.Eighth},
-		{buzzer.F4, buzzer.Quarter},
-		{buzzer.A4, buzzer.Quarter},
-		{buzzer.G4, buzzer.Half},
-		{buzzer.F4, buzzer.Eighth},
-		{buzzer.G4, buzzer.Quarter},
-		{buzzer.A4, buzzer.Quarter},
-		{buzzer.F4, buzzer.Half},
-		{buzzer.F4, buzzer.Eighth},
-		{buzzer.A4, buzzer.Quarter},
-		{buzzer.C5, buzzer.Quarter},
-		{buzzer.D5, buzzer.Half},
-	}
+	rightButton     machine.Pin
+	leftButton      machine.Pin
+	downButton      machine.Pin
+	upButton        machine.Pin
+	stickPushButton machine.Pin
+	opt1Button      machine.Pin
+	opt2Button      machine.Pin
+	opt3Button      machine.Pin
 )
 
 func initDisplay() displayer {
-	bzrPin := machine.WIO_BUZZER
-	bzrPin.Configure(machine.PinConfig{Mode: machine.PinOutput})
-	bzr = buzzer.New(bzrPin)
-
-	btnX, btnY, btnZ, btnB := machine.SWITCH_X, machine.SWITCH_Y, machine.SWITCH_Z, machine.SWITCH_B
+	btnX, btnY, btnZ, btnB, btnU := machine.SWITCH_X, machine.SWITCH_Y, machine.SWITCH_Z, machine.SWITCH_B, machine.SWITCH_U
+	// ジョイスティックを押したとき
 	btn1, btn2, btn3 := machine.BUTTON_1, machine.BUTTON_2, machine.BUTTON_3
 
 	rightButton = btnZ
@@ -60,6 +38,8 @@ func initDisplay() displayer {
 	btnB.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
 	upButton = btnX
 	btnX.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
+	stickPushButton = btnU
+	btnU.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
 	opt1Button = btn1
 	opt1Button.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
 	opt2Button = btn2
@@ -93,6 +73,7 @@ func PressKeyRight() bool { return !rightButton.Get() }
 func PressKeyLeft() bool  { return !leftButton.Get() }
 func PressKeyDown() bool  { return !downButton.Get() }
 func PressKeyUp() bool    { return !upButton.Get() }
+func PressEnter() bool    { return !stickPushButton.Get() }
 
 // Option 1（上部の左ボタン）
 func PressOption1() bool { return !opt3Button.Get() }
@@ -102,10 +83,3 @@ func PressOption2() bool { return !opt2Button.Get() }
 
 // Option 3（上部の右）
 func PressOption3() bool { return !opt1Button.Get() }
-
-func Buzzer() {
-	for _, n := range buzzerNotes {
-		bzr.Tone(n.tone, n.duration)
-		time.Sleep(10 * time.Millisecond)
-	}
-}
