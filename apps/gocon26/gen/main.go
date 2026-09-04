@@ -64,7 +64,7 @@ func genGopher() {
 }
 
 func genMyGopher() {
-	f, err := os.Open("../image.png")
+	f, err := os.Open("image.png")
 	if err != nil {
 		panic(err)
 	}
