@@ -270,9 +270,9 @@ func (gd *gameData) nextWall() {
 	var appendPos int16
 	if gd.score >= 500 {
 		appendPos = 1
-	} else if gd.score > 3000 {
+	} else if gd.score > 2000 {
 		appendPos = 2
-	} else if gd.score > 6000 {
+	} else if gd.score > 5000 {
 		appendPos = 3
 	}
 
@@ -287,7 +287,6 @@ func (gd *gameData) nextWall() {
 	}
 
 	newPos := gd.walls[9] + delta
-
 	if newPos < wallMinMove {
 		newPos = wallMinMove
 	}
@@ -309,11 +308,11 @@ func (gd *gameData) wallIntervalThreshold() int8 {
 	switch {
 	case gd.score >= 4000:
 		return 1
-	case gd.score >= 3000:
+	case gd.score >= 2500:
 		return 2
-	case gd.score >= 2000:
+	case gd.score >= 1500:
 		return 3
-	case gd.score >= 1000:
+	case gd.score >= 500:
 		return 4
 	default:
 		return 5
