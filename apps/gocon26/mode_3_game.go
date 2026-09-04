@@ -28,6 +28,9 @@ const (
 
 	// "==" の文字幅（ピクセル、要調整）
 	wallTextWidth int16 = 20
+
+	deadZone = 0.05
+	maxAngle = 1.0
 )
 
 var (
@@ -57,6 +60,28 @@ func switchGame() {
 	waitRelease(PressOption3)
 }
 
+func handleGopherMove() {
+	if !SupportAtan() {
+		if PressKeyLeft() {
+			gd.moveLeft(gopherMovePixel)
+		}
+		if PressKeyRight() {
+			gd.moveRight(gopherMovePixel)
+		}
+		return
+	}
+
+	// 加速度の計算が使える場合は傾きで移動
+	ay := AtanY()
+	if ay > deadZone {
+		px := int16(ay / maxAngle * float64(gopherMovePixel) * 1.7)
+		gd.moveLeft(px)
+	} else if ay < -deadZone {
+		px := int16(-ay / maxAngle * float64(gopherMovePixel) * 0.7)
+		gd.moveRight(px)
+	}
+}
+
 func displayGameWaiting(disp displayer, lab *label) {
 	if PressOption1() {
 		switchTitle()
@@ -72,12 +97,7 @@ func displayGameWaiting(disp displayer, lab *label) {
 		return
 	}
 
-	if PressKeyLeft() {
-		gd.moveLeft()
-	}
-	if PressKeyRight() {
-		gd.moveRight()
-	}
+	handleGopherMove()
 	if PressEnter() {
 		gd.switchMode(gameModePlaying)
 		waitRelease(PressEnter)
@@ -86,19 +106,22 @@ func displayGameWaiting(disp displayer, lab *label) {
 
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
+
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 200, 15, fmt.Sprintf("Aton: %f", AtanY()), black)
+
 	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, gd.pos, 65)
 	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 15, 140, "Push stick to start!!", black)
-	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 45, 210, "[<-] Move left / Move right [->]", black)
+
+	if SupportAtan() {
+		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 45, 210, "[<-] Tilt left / Tilt right [->]", black)
+	} else {
+		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 45, 210, "[<-] Move left / Move right [->]", black)
+	}
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 }
 
 func displayGamePlaying(disp displayer, lab *label) {
-	if PressKeyLeft() {
-		gd.moveLeft()
-	}
-	if PressKeyRight() {
-		gd.moveRight()
-	}
+	handleGopherMove()
 
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
@@ -216,13 +239,16 @@ func (gd *gameData) countUp() {
 func (gd *gameData) switchMode(m int8) {
 	gd.mode = m
 	if m == gameModePlaying {
+		gd.pos = defaultGopherPositionX
 		gd.walls = make([]int16, 10)
+		CalibrateAtan()
 		return
 	}
 
 	if m == gameModeWaiting {
 		gd.score = 0
 		gd.pos = defaultGopherPositionX
+		CalibrateAtan()
 	}
 }
 
@@ -353,14 +379,14 @@ func (gd *gameData) updateHiScore() {
 	}
 }
 
-func (gd *gameData) moveLeft() {
-	gd.pos -= gopherMovePixel
+func (gd *gameData) moveLeft(p int16) {
+	gd.pos -= p
 	if gd.pos <= 10 {
 		gd.pos = 10
 	}
 }
 
-func (gd *gameData) moveRight() {
+func (gd *gameData) moveRight(p int16) {
 	gd.pos += gopherMovePixel
 	if gd.pos >= 280 {
 		gd.pos = 280

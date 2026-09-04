@@ -7,6 +7,7 @@ import (
 	"machine"
 
 	"tinygo.org/x/drivers/ili9341"
+	"tinygo.org/x/drivers/lis3dh"
 )
 
 type note struct {
@@ -23,6 +24,9 @@ var (
 	opt1Button      machine.Pin
 	opt2Button      machine.Pin
 	opt3Button      machine.Pin
+
+	accel      lis3dh.Device
+	atanOffset float64
 )
 
 func initDisplay() displayer {
@@ -55,6 +59,15 @@ func initDisplay() displayer {
 		Frequency: 60000000,
 	})
 
+	// 加速度情報の取得
+	scl, sda := machine.SCL0_PIN, machine.SDA0_PIN
+	i2c := machine.I2C0
+	i2c.Configure(machine.I2CConfig{SCL: scl, SDA: sda})
+	accel = lis3dh.New(i2c)
+	accel.Address = lis3dh.Address0
+	accel.Configure()
+	accel.SetRange(lis3dh.RANGE_2_G)
+
 	spi3 := *machine.SPI3
 	dc, cs, rst := machine.LCD_DC, machine.LCD_SS_PIN, machine.LCD_RESET
 	d := ili9341.NewSPI(spi3, dc, cs, rst)
@@ -83,3 +96,18 @@ func PressOption2() bool { return !opt2Button.Get() }
 
 // Option 3（上部の右）
 func PressOption3() bool { return !opt1Button.Get() }
+
+func CalibrateAtan() {
+	_, y, _, _ := accel.ReadAcceleration()
+	atanOffset = float64(y) / 1000000
+}
+
+// 画面の傾き（-1g〜1g の範囲）
+func AtanY() float64 {
+	_, y, _, _ := accel.ReadAcceleration()
+	return float64(y)/1000000 - atanOffset
+}
+
+func SupportAtan() bool {
+	return true
+}

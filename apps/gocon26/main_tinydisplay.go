@@ -36,6 +36,8 @@ func initDisplay() displayer {
 	return &tinyDisplay{}
 }
 
+func CalibrateAtan() {}
+
 func PressKeyRight() bool { return display.GetPressedKey() == 0x106 }
 func PressKeyLeft() bool  { return display.GetPressedKey() == 0x107 }
 func PressKeyDown() bool  { return display.GetPressedKey() == 0x108 }
@@ -50,3 +52,8 @@ func PressOption2() bool { return display.GetPressedKey() == '1' }
 
 // Option 3（上部の右）
 func PressOption3() bool { return display.GetPressedKey() == '0' }
+
+// 画面の傾きはサポート外
+func CalibrateAtan()    {}
+func AtanY() float64    { return 0 }
+func SupportAtan() bool { return false }
