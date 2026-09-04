@@ -26,7 +26,7 @@ var (
 	opt3Button      machine.Pin
 
 	accel      lis3dh.Device
-	atanOffset float64
+	accelOffset float64
 )
 
 func initDisplay() displayer {
@@ -97,17 +97,17 @@ func PressOption2() bool { return !opt2Button.Get() }
 // Option 3（上部の右）
 func PressOption3() bool { return !opt1Button.Get() }
 
-func CalibrateAtan() {
+func CalibrateAccel() {
 	_, y, _, _ := accel.ReadAcceleration()
-	atanOffset = float64(y) / 1000000
+	accelOffset = float64(y) / 1000000
 }
 
 // 画面の傾き（-1g〜1g の範囲）
-func AtanY() float64 {
+func AccelY() float64 {
 	_, y, _, _ := accel.ReadAcceleration()
-	return float64(y)/1000000 - atanOffset
+	return float64(y)/1000000 - accelOffset
 }
 
-func SupportAtan() bool {
+func SupportAccel() bool {
 	return true
 }

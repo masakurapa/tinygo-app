@@ -61,7 +61,7 @@ func switchGame() {
 }
 
 func handleGopherMove() {
-	if !SupportAtan() {
+	if !SupportAccel() {
 		if PressKeyLeft() {
 			gd.moveLeft(gopherMovePixel)
 		}
@@ -72,7 +72,8 @@ func handleGopherMove() {
 	}
 
 	// 加速度の計算が使える場合は傾きで移動
-	ay := AtanY()
+	// NOTE: 左右の傾きで移動速度が違うので良い感じになるように補正している
+	ay := AccelY()
 	if ay > deadZone {
 		px := int16(ay / maxAngle * float64(gopherMovePixel) * 1.7)
 		gd.moveLeft(px)
@@ -106,14 +107,12 @@ func displayGameWaiting(disp displayer, lab *label) {
 
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
-
-	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 200, 15, fmt.Sprintf("Aton: %f", AtanY()), black)
-
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 200, 15, fmt.Sprintf("Accel: %f", AccelY()), black)
 	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, gd.pos, 65)
 	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 15, 140, "Push stick to start!!", black)
 
-	if SupportAtan() {
-		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 45, 210, "[<-] Tilt left / Tilt right [->]", black)
+	if SupportAccel() {
+		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 65, 210, "[<-] Tilt left / Tilt right [->]", black)
 	} else {
 		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 45, 210, "[<-] Move left / Move right [->]", black)
 	}
@@ -125,6 +124,7 @@ func displayGamePlaying(disp displayer, lab *label) {
 
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
+	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 200, 15, fmt.Sprintf("Accel: %f", AccelY()), black)
 	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, gd.pos, 65)
 
 	// view wall
@@ -241,14 +241,14 @@ func (gd *gameData) switchMode(m int8) {
 	if m == gameModePlaying {
 		gd.pos = defaultGopherPositionX
 		gd.walls = make([]int16, 10)
-		CalibrateAtan()
+		CalibrateAccel()
 		return
 	}
 
 	if m == gameModeWaiting {
 		gd.score = 0
 		gd.pos = defaultGopherPositionX
-		CalibrateAtan()
+		CalibrateAccel()
 	}
 }
 
