@@ -272,8 +272,10 @@ func (gd *gameData) nextWall() {
 		appendPos = 1
 	} else if gd.score > 2000 {
 		appendPos = 2
-	} else if gd.score > 5000 {
+	} else if gd.score > 4000 {
 		appendPos = 3
+	} else if gd.score > 5000 {
+		appendPos = 4
 	}
 
 	var delta int16
