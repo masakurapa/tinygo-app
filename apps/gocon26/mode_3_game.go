@@ -34,8 +34,12 @@ const (
 )
 
 var (
-	gd           gameData
-	gameHiScores = make([]int, 20)
+	gd gameData
+
+	// 加速度モードのハイスコア
+	gameAccelHighScores = make([]int, 7)
+	// スティックモードのハイスコア
+	gameStickHighScores = make([]int, 7)
 )
 
 func displayGame(disp displayer, lab *label) {
@@ -46,22 +50,23 @@ func displayGame(disp displayer, lab *label) {
 		displayGamePlaying(disp, lab)
 	case gd.finished():
 		displayGameFinished(disp, lab)
-	case gd.hiScore():
-		displayGameHiScores(disp, lab)
+	case gd.highScore():
+		displayGameHighScores(disp, lab)
 	}
 }
 
 func switchGame() {
 	gd = gameData{
-		mode: gameModeWaiting,
-		pos:  defaultGopherPositionX,
+		mode:     gameModeWaiting,
+		pos:      defaultGopherPositionX,
+		useAccel: SupportAccel(),
 	}
 	currentMode = modeGame
 	waitRelease(PressOption3)
 }
 
 func handleGopherMove() {
-	if !SupportAccel() {
+	if !gd.useAccel {
 		if PressKeyLeft() {
 			gd.moveLeft(gopherMovePixel)
 		}
@@ -93,7 +98,7 @@ func displayGameWaiting(disp displayer, lab *label) {
 		return
 	}
 	if PressOption3() {
-		gd.switchMode(gameModeHiScore)
+		gd.switchMode(gameModeHighScore)
 		waitRelease(PressOption3)
 		return
 	}
@@ -104,6 +109,11 @@ func displayGameWaiting(disp displayer, lab *label) {
 		waitRelease(PressEnter)
 		return
 	}
+	if SupportAccel() && PressKeyUp() {
+		gd.useAccel = !gd.useAccel
+		waitRelease(PressKeyUp)
+		return
+	}
 
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
@@ -111,10 +121,16 @@ func displayGameWaiting(disp displayer, lab *label) {
 	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, gd.pos, 65)
 	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 15, 140, "Push stick to start!!", black)
 
-	if SupportAccel() {
-		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 65, 210, "[<-] Tilt left / Tilt right [->]", black)
+	if gd.useAccel {
+		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 110, 160, "~ tilt mode ~", black)
+		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 70, 200, "[^] Switch to Stick Mode", black)
+		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 65, 220, "[<-] Tilt left / Tilt right [->]", black)
 	} else {
-		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 45, 210, "[<-] Move left / Move right [->]", black)
+		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 105, 160, "~ stick mode ~", black)
+		if SupportAccel() {
+			tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 75, 200, "[^] Switch to Tilt Mode", black)
+		}
+		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 45, 220, "[<-] Move left / Move right [->]", black)
 	}
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 }
@@ -162,7 +178,7 @@ func displayGameFinished(disp displayer, lab *label) {
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 }
 
-func displayGameHiScores(disp displayer, lab *label) {
+func displayGameHighScores(disp displayer, lab *label) {
 	if PressOption1() {
 		switchTitle()
 		return
@@ -178,24 +194,25 @@ func displayGameHiScores(disp displayer, lab *label) {
 	}
 
 	lab.FillScreen(white)
-	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, 10, 10)
+	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, 60, 0)
+	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, 225, 0)
 
-	for i, s := range gameHiScores {
+	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 100, 20, "High Score", black)
+	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 60, 60, "Accel", black)
+	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 200, 60, "Stick", black)
+
+	for i, s := range gameAccelHighScores {
 		rank := i + 1
 		y := 24 * (i % 10)
+		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 60, int16(86+y), fmt.Sprintf("%d.", rank), black)
+		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 100, int16(86+y), fmt.Sprintf("%d", s), black)
+	}
 
-		// 1列10個まで
-		if rank <= 10 {
-			if rank < 10 {
-				tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 60, int16(16+y), fmt.Sprintf("  %d.", rank), black)
-			} else {
-				tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 60, int16(16+y), fmt.Sprintf("%d.", rank), black)
-			}
-			tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 100, int16(16+y), fmt.Sprintf("%d", s), black)
-		} else {
-			tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 200, int16(16+y), fmt.Sprintf("%d.", rank), black)
-			tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 240, int16(16+y), fmt.Sprintf("%d", s), black)
-		}
+	for i, s := range gameStickHighScores {
+		rank := i + 1
+		y := 24 * (i % 10)
+		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 200, int16(86+y), fmt.Sprintf("%d.", rank), black)
+		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 240, int16(86+y), fmt.Sprintf("%d", s), black)
 	}
 
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
@@ -214,13 +231,15 @@ type gameData struct {
 	// wall
 	walls        []int16
 	wallInterval int8
+
+	useAccel bool
 }
 
 const (
 	gameModeWaiting int8 = iota
 	gameModePlaying
 	gameModeFinished
-	gameModeHiScore
+	gameModeHighScore
 )
 
 func (gd *gameData) countUp() {
@@ -361,19 +380,31 @@ func (gd *gameData) checkCollision() {
 
 		if gopherLeft < leftWallRight || gopherRight > rightWallLeft {
 			time.Sleep(1 * time.Second)
-			gd.updateHiScore()
+			gd.updateHighScore()
 			gd.switchMode(gameModeFinished)
 			return
 		}
 	}
 }
 
-func (gd *gameData) updateHiScore() {
+func (gd *gameData) updateHighScore() {
 	score := gd.score
-	for i := range 20 {
-		if score > gameHiScores[i] {
-			tmp := gameHiScores[i]
-			gameHiScores[i] = score
+
+	if gd.useAccel {
+		for i := range 7 {
+			if score > gameAccelHighScores[i] {
+				tmp := gameAccelHighScores[i]
+				gameAccelHighScores[i] = score
+				score = tmp
+			}
+		}
+		return
+	}
+
+	for i := range 7 {
+		if score > gameStickHighScores[i] {
+			tmp := gameStickHighScores[i]
+			gameStickHighScores[i] = score
 			score = tmp
 		}
 	}
@@ -405,6 +436,6 @@ func (gd *gameData) finished() bool {
 	return gd.mode == gameModeFinished
 }
 
-func (gd *gameData) hiScore() bool {
-	return gd.mode == gameModeHiScore
+func (gd *gameData) highScore() bool {
+	return gd.mode == gameModeHighScore
 }
