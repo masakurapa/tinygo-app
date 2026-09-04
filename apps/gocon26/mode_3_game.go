@@ -19,8 +19,8 @@ const (
 	wallBasePositionY = 240
 	wallMoveStepX     = 10
 
-	wallMinMove = -6
-	wallMaxMove = 6
+	wallMinMove = -10
+	wallMaxMove = 10
 
 	// gopherのY範囲（65〜97）と重なる壁インデックス
 	wallCollisionIndexMin = 1
@@ -216,17 +216,27 @@ func (gd *gameData) nextWall() {
 	total := bias[0] + bias[1] + bias[2]
 	r := rand.N(total)
 
+	var appendPos int16
+	if gd.score >= 500 {
+		appendPos = 1
+	} else if gd.score > 3000 {
+		appendPos = 2
+	} else if gd.score > 6000 {
+		appendPos = 3
+	}
+
 	var delta int16
 	switch {
 	case r < bias[0]:
-		delta = -2
+		delta = -1 + (appendPos * -1)
 	case r < bias[0]+bias[1]:
 		delta = 0
 	default:
-		delta = +2
+		delta = 1 + appendPos
 	}
 
 	newPos := gd.walls[9] + delta
+
 	if newPos < wallMinMove {
 		newPos = wallMinMove
 	}
@@ -246,20 +256,16 @@ func (gd *gameData) nextWall() {
 
 func (gd *gameData) wallIntervalThreshold() int8 {
 	switch {
-	case gd.score >= 10000:
-		return 4
-	case gd.score >= 5000:
-		return 5
 	case gd.score >= 4000:
-		return 6
+		return 1
 	case gd.score >= 3000:
-		return 7
+		return 2
 	case gd.score >= 2000:
-		return 8
+		return 3
 	case gd.score >= 1000:
-		return 9
+		return 4
 	default:
-		return 10
+		return 5
 	}
 }
 func (gd *gameData) checkCollision() {
