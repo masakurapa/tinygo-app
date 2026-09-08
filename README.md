@@ -9,3 +9,7 @@
 
 - tniygo 0.36
 - koebiten 0.21
+
+# Go Gopher Credit
+
+The Go gopher was designed by [Renée French](https://reneefrench.blogspot.com/)
