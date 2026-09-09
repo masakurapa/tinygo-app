@@ -118,7 +118,7 @@ func displayGameWaiting(disp displayer, lab *label) {
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 200, 15, fmt.Sprintf("Accel: %f", AccelY()), black)
-	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, gd.pos, 65)
+	lab.DrawBitmapFromRaw(img.GopherFallRaw, img.GopherFallW, img.GopherFallH, gd.pos, 65)
 	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 15, 140, "Push stick to start!!", black)
 
 	if gd.useAccel {
@@ -148,7 +148,7 @@ func displayGamePlaying(disp displayer, lab *label) {
 		tinyfont.WriteLine(lab, &freesans.Regular9pt7b, wallBasePositionY+(w*wallMoveStepX), int16(50+i*20), wallStr, black)
 	}
 
-	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, gd.pos, 65)
+	lab.DrawBitmapFromRaw(img.GopherFallRaw, img.GopherFallW, img.GopherFallH, gd.pos, 65)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
 	gd.checkCollision()
 	gd.countUp()
@@ -172,7 +172,7 @@ func displayGameFinished(disp displayer, lab *label) {
 
 	lab.FillScreen(white)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 15, fmt.Sprintf("Score: %d", gd.score), black)
-	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, defaultGopherPositionX, 65)
+	lab.DrawBitmapFromRaw(img.GopherFallRaw, img.GopherFallW, img.GopherFallH, defaultGopherPositionX, 65)
 	tinyfont.WriteLine(lab, &freesans.Regular18pt7b, 65, 140, "Game Over!!", black)
 	tinyfont.WriteLine(lab, &freesans.Regular9pt7b, 10, 210, "Press the [top-right button] to go back", black)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
@@ -194,8 +194,8 @@ func displayGameHighScores(disp displayer, lab *label) {
 	}
 
 	lab.FillScreen(white)
-	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, 60, 0)
-	lab.DrawBitmapFromRaw(img.GopherRaw, img.GopherW, img.GopherH, 225, 0)
+	lab.DrawBitmapFromRaw(img.GopherFallRaw, img.GopherFallW, img.GopherFallH, 60, 0)
+	lab.DrawBitmapFromRaw(img.GopherFallRaw, img.GopherFallW, img.GopherFallH, 225, 0)
 
 	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 100, 20, "High Score", black)
 	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 60, 60, "Accel", black)
@@ -371,7 +371,7 @@ func (gd *gameData) checkCollision() {
 	}
 
 	gopherLeft := gd.pos
-	gopherRight := gd.pos + img.GopherW
+	gopherRight := gd.pos + img.GopherFallW
 
 	for i := wallCollisionIndexMin; i <= wallCollisionIndexMax; i++ {
 		w := gd.walls[i]
