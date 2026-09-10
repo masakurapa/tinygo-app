@@ -84,6 +84,8 @@ func displayQR(disp displayer, lab *label) {
 	}
 
 	lab.FillScreen(white)
+	tinyfont.WriteLine(lab, &freesans.Regular24pt7b, 10, 140, "<", black)
+	tinyfont.WriteLine(lab, &freesans.Regular24pt7b, 285, 140, ">", black)
 	drawBitmap(lab, currentQRData.bitmap, currentQRData.x, currentQRData.y, currentQRData.scale)
 	tinyfont.WriteLine(lab, &freesans.Regular12pt7b, 62, 24, currentQRData.title, black)
 	disp.DrawRGBBitmap(0, 0, lab.buf, lab.w, lab.h)
