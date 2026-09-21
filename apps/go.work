@@ -1,0 +1,8 @@
+go 1.26.7
+
+use (
+	./dropcircle
+	./gocon26
+	./timergame
+	./timer
+)
