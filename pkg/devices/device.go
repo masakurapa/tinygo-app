@@ -1,6 +1,7 @@
 package devices
 
 import (
+	"image/color"
 	"time"
 
 	"tinygo.org/x/drivers"
@@ -9,6 +10,7 @@ import (
 type Displayer interface {
 	drivers.Displayer
 	DrawRGBBitmap(x, y int16, data []uint16, w, h int16) error
+	FillScreen(c color.RGBA)
 }
 
 func WaitRelease(pressed func() bool) {
