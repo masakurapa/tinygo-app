@@ -1,13 +1,17 @@
 package main
 
 import (
+	"image/color"
 	"math/rand/v2"
 	"time"
 
-	"github.com/masakurapa/tinygo-app/pkg/color"
-	"github.com/masakurapa/tinygo-app/pkg/devices"
 	"tinygo.org/x/tinyfont"
 	"tinygo.org/x/tinyfont/freesans"
+)
+
+var (
+	black = color.RGBA{0, 0, 0, 255}
+	white = color.RGBA{255, 255, 255, 255}
 )
 
 const gopherW, gopherH int16 = 32, 32
@@ -34,8 +38,8 @@ const (
 )
 
 const (
-	modeTitle   = 0
-	modePlaying = 1
+	modeTitle    = 0
+	modePlaying  = 1
 	modeGameOver = 2
 )
 
@@ -104,7 +108,7 @@ func nextWall() {
 	walls[9] = newPos
 }
 
-func drawBitmapFromRaw(disp devices.Displayer, raw string, srcW, srcH, x, y int16) {
+func drawBitmapFromRaw(raw string, srcW, srcH, x, y int16) {
 	buf := make([]uint16, int(srcW)*int(srcH))
 	for i := range buf {
 		buf[i] = uint16(raw[i*2]) | uint16(raw[i*2+1])<<8
@@ -114,7 +118,7 @@ func drawBitmapFromRaw(disp devices.Displayer, raw string, srcW, srcH, x, y int1
 
 // NOTE: 左右の傾きで移動速度が違うので良い感じになるように補正している
 func handleGopherMove() {
-	ay := devices.AccelY()
+	ay := accelY()
 	if ay > deadZone {
 		px := int16(ay / maxAngle * float64(gopherMovePixel) * 1.7)
 		gopherPos -= px
@@ -142,35 +146,35 @@ func checkCollision() bool {
 	return false
 }
 
-func handleTitle(disp devices.Displayer) {
+func handleTitle() {
 	handleGopherMove()
 
-	if devices.PressEnter() {
+	if pressEnter() {
 		walls = make([]int16, 10)
 		wallInterval = 0
 		gopherPos = 140
-		devices.CalibrateAccel()
+		calibrateAccel()
 		gameMode = modePlaying
-		devices.WaitRelease(devices.PressEnter)
+		waitRelease(pressEnter)
 		return
 	}
 
-	disp.FillScreen(color.White)
-	tinyfont.WriteLine(disp, &freesans.Regular18pt7b, 15, 140, "Push stick to start!!", color.Black)
-	drawBitmapFromRaw(disp, gopherRaw, gopherW, gopherH, gopherPos, 65)
+	disp.FillScreen(white)
+	tinyfont.WriteLine(disp, &freesans.Regular18pt7b, 15, 140, "Push stick to start!!", black)
+	drawBitmapFromRaw(gopherRaw, gopherW, gopherH, gopherPos, 65)
 }
 
-func handlePlaying(disp devices.Displayer) {
+func handlePlaying() {
 	handleGopherMove()
 
-	disp.FillScreen(color.White)
+	disp.FillScreen(white)
 
 	for i, w := range walls {
-		tinyfont.WriteLine(disp, &freesans.Regular9pt7b, wallBasePositionX+(w*wallMoveStepX), int16(50+i*20), wallStr, color.Black)
-		tinyfont.WriteLine(disp, &freesans.Regular9pt7b, wallBasePositionY+(w*wallMoveStepX), int16(50+i*20), wallStr, color.Black)
+		tinyfont.WriteLine(disp, &freesans.Regular9pt7b, wallBasePositionX+(w*wallMoveStepX), int16(50+i*20), wallStr, black)
+		tinyfont.WriteLine(disp, &freesans.Regular9pt7b, wallBasePositionY+(w*wallMoveStepX), int16(50+i*20), wallStr, black)
 	}
 
-	drawBitmapFromRaw(disp, gopherRaw, gopherW, gopherH, gopherPos, 65)
+	drawBitmapFromRaw(gopherRaw, gopherW, gopherH, gopherPos, 65)
 
 	if checkCollision() {
 		time.Sleep(1 * time.Second)
@@ -181,34 +185,34 @@ func handlePlaying(disp devices.Displayer) {
 	nextWall()
 }
 
-func handleGameOver(disp devices.Displayer) {
-	if devices.PressEnter() {
+func handleGameOver() {
+	if pressEnter() {
 		gopherPos = 140
 		gameMode = modeTitle
-		devices.WaitRelease(devices.PressEnter)
+		waitRelease(pressEnter)
 		return
 	}
 
-	disp.FillScreen(color.White)
-	tinyfont.WriteLine(disp, &freesans.Regular18pt7b, 65, 140, "Game Over!!", color.Black)
-	tinyfont.WriteLine(disp, &freesans.Regular9pt7b, 10, 210, "Push stick to go back", color.Black)
-	drawBitmapFromRaw(disp, gopherRaw, gopherW, gopherH, 140, 65)
+	disp.FillScreen(white)
+	tinyfont.WriteLine(disp, &freesans.Regular18pt7b, 65, 140, "Game Over!!", black)
+	tinyfont.WriteLine(disp, &freesans.Regular9pt7b, 10, 210, "Push stick to go back", black)
+	drawBitmapFromRaw(gopherRaw, gopherW, gopherH, 140, 65)
 }
 
 func main() {
 	tick := time.Tick(16 * time.Millisecond)
-	disp := devices.New()
-	devices.CalibrateAccel()
+	initDisplay()
+	calibrateAccel()
 
 	for {
 		<-tick
 		switch gameMode {
 		case modeTitle:
-			handleTitle(disp)
+			handleTitle()
 		case modePlaying:
-			handlePlaying(disp)
+			handlePlaying()
 		case modeGameOver:
-			handleGameOver(disp)
+			handleGameOver()
 		}
 	}
 }

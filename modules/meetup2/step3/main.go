@@ -1,12 +1,16 @@
 package main
 
 import (
+	"image/color"
 	"time"
 
-	"github.com/masakurapa/tinygo-app/pkg/color"
-	"github.com/masakurapa/tinygo-app/pkg/devices"
 	"tinygo.org/x/tinyfont"
 	"tinygo.org/x/tinyfont/freesans"
+)
+
+var (
+	black = color.RGBA{0, 0, 0, 255}
+	white = color.RGBA{255, 255, 255, 255}
 )
 
 const gopherW, gopherH int16 = 32, 32
@@ -22,7 +26,7 @@ const (
 
 var gopherPos int16 = 140
 
-func drawBitmapFromRaw(disp devices.Displayer, raw string, srcW, srcH, x, y int16) {
+func drawBitmapFromRaw(raw string, srcW, srcH, x, y int16) {
 	buf := make([]uint16, int(srcW)*int(srcH))
 	for i := range buf {
 		buf[i] = uint16(raw[i*2]) | uint16(raw[i*2+1])<<8
@@ -32,7 +36,7 @@ func drawBitmapFromRaw(disp devices.Displayer, raw string, srcW, srcH, x, y int1
 
 // NOTE: 左右の傾きで移動速度が違うので良い感じになるように補正している
 func handleGopherMove() {
-	ay := devices.AccelY()
+	ay := accelY()
 	if ay > deadZone {
 		px := int16(ay / maxAngle * float64(gopherMovePixel) * 1.7)
 		gopherPos -= px
@@ -50,14 +54,14 @@ func handleGopherMove() {
 
 func main() {
 	tick := time.Tick(16 * time.Millisecond)
-	disp := devices.New()
-	devices.CalibrateAccel()
+	initDisplay()
+	calibrateAccel()
 
 	for {
 		<-tick
 		handleGopherMove()
-		disp.FillScreen(color.White)
-		tinyfont.WriteLine(disp, &freesans.Regular18pt7b, 15, 140, "Push stick to start!!", color.Black)
-		drawBitmapFromRaw(disp, gopherRaw, gopherW, gopherH, gopherPos, 65)
+		disp.FillScreen(white)
+		tinyfont.WriteLine(disp, &freesans.Regular18pt7b, 15, 140, "Push stick to start!!", black)
+		drawBitmapFromRaw(gopherRaw, gopherW, gopherH, gopherPos, 65)
 	}
 }
